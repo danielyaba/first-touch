@@ -16,25 +16,36 @@ LOG_FILE=/tmp/first-touch-output.log
 #   fi
 # }
 
-install_tool() {
+install_oh-my-zsh() {
+  if command -v curl >/dev/null 2>&1; then
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  elif command -v wget >/dev/null 2>&1; then
+    sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
+  else
+    echo "Error: Neither curl nor wget is installed. Please install one of them." > $ERROR_LOG_FILE
+    exit 1
+  fi
+}
+
+check_os() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
-    brew install $1 2> $ERROR_LOG_FILE
-    check_status
+    echo "brew" > $LOG_FILE
   elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     if [ -f /etc/os-release ]; then
       . /etc/os-release
       if [[ "$ID" == "ubuntu" ]]; then
-        sudo apt-get update
-        sudo apt-get install -y $1 2> $ERROR_LOG_FILE
-        check_status
+        echo "apt-get" > $LOG_FILE
       else
         echo "Unsupported Linux distribution: $ID"
+        return 1
       fi
     else
-      echo "Unsupported Linux distribution"
+      echo "Unsupported Linux distribution"exit 1
+      return 1
     fi
   else
     echo "Unsupported OS: $OSTYPE"
+    return 1
   fi
 }
 
@@ -72,8 +83,8 @@ spinner() {
         output=$(cat $ERROR_LOG_FILE)
         echo -e "$output"
         rm -f $ERROR_LOG_FILE
-        tput cnorm
-        exit 1
+        # tput cnorm
+        # exit 1
     fi
 
     step=$((step + 1))
@@ -92,70 +103,28 @@ echo "=                                                             ="
 echo "==============================================================="
 echo ""
 
-# install oh-my-zsh terminal
-# echo "Installing Oh-My-Zsh..."
-# sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-# if [[ $0 -eq 0 ]]; then
-#   echo "Error installing jq library. Reason: $(cat $ERROR_LOG_FILE)"
-#   exit 1
-# fi
-# echo "Installed Oh-My-Zsh successfully"
-
-# echo "### Useful aliases ###" > ~/.zshrc
-
-# install jq
-# TOOL=jq
-# echo "installing $TOOL..."
-# brew install $TOOL 2> $ERROR_LOG_FILE
-# check_status $? $TOOL
-
-
-# # install yq
-# TOOL=yq
-# echo "Installing $TOOL..."
-# brew install $TOOL 2> $ERROR_LOG_FILE
-# check_status $? $TOOL
-
-# # install bat
-# TOOL=bat
-# brew install $TOOLS -y 2> $ERROR_LOG_FILE
-# check_status $? $TOOL
-# echo "Changing cat to bat with alias in ~/.zshrc file"
-# sed -i '' '/### Useful aliases ###/a\
-# alias cat='\''bat --paging never --theme DarkNeon'\''' ~/.zshrc
-# echo "Successfully added bat alias in ~/.zshrc file"
-
-# # install VSCode
-# TOOL=visual-studio-code
-# brew install $TOOLS -y 2> $ERROR_LOG_FILE
-# check_status $? $TOOL
-
-
-# install gcloud (including kubectl and Python)
-# curl https://sdk.cloud.google.com > install.sh
-# bash install.sh --disable-prompts
-
-# install git
-# brew intall git -y 2> $ERROR_LOG_FILE
-
-# install kubens & kubectx
-# brew install kubectx -y 2> $ERROR_LOG_FILE
-
-# install GKE-Private-Tunneller (Access private GKE clusters)
-# git clone https://github.com/danielyaba/gke-private-tunneller.git
-# cp gke-private-tunneller/gke_tunnel gke-private-tunneller/disable_gke_tunnel /usr/local/bin/
-# chmod +x /usr/local/bin/gke_tunnel /usr/local/bin/disable_gke_tunnel
-# rm -rf gke-private-tunneller/
+spinner "checking OS package manager" check_os
+package_manager=$(cat $LOG_FILE)
+echo "Your OS package manager is $package_manager" 
 
 STEPS=(
+  "installing Oh-My-Zsh terminal"
   "Installing yq"
-  "install jq"
-  "installing VSCode"
+  "installing jq"
+  # "installing VSCode"
+  "installing bat"
+  # "installing kubectx & kubens"
+  # "installing git"
+
 )
 CMDS=(
-  "brew install yq"
-  "brew install jq"
-  "brew install visual-studio-code"
+  # "$package_manager install oh-my-zsh"
+  "$package_manager install yq"
+  "$package_manager install jq"
+  # "$package_manager install visual-studio-code"
+  # "$package_manager install bat"
+  # "$package_manager kubectx"
+  # "$package_manager git"
 )
 
 spinner "${STEPS[@]}" "${CMDS[@]}"
