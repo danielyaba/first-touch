@@ -1,20 +1,9 @@
 #!/bin/bash
 
+
 ERROR_LOG_FILE=/tmp/first-touch-errors.log
 LOG_FILE=/tmp/first-touch-output.log
 
-# check_status () {
-#   if [[ $1 -eq 0 ]]; then
-#     echo "Successfully installed $2"
-#     echo "==============================================================="
-#   else   
-#     echo "1: $1"
-#     echo "Error installing $2 libraries."
-#     echo "Reason: $(cat $ERROR_LOG_FILE)"
-#     echo "Procceeding installing other utilities..."
-#     echo "==============================================================="
-#   fi
-# }
 
 install_oh-my-zsh() {
   if command -v curl >/dev/null 2>&1; then
@@ -25,7 +14,28 @@ install_oh-my-zsh() {
     echo "Error: Neither curl nor wget is installed. Please install one of them." > $ERROR_LOG_FILE
     exit 1
   fi
+
+  echo #### USEFUL ALIASES ### >> ~/.zshrc
+  echo "alias install='brew install'"
+  echo "alias uninstall='brew uninstall'"
+  echo "alias refresh='source ~/.zshrc'"
+  echo "alias ll='ls -lha'"
+  
 }
+
+install_bat() {
+  $1 bat
+  echo "alias cat='bat --paging never --theme DarkNeon'"
+}
+
+install_gcloud() {
+
+}
+
+install_kubectk_helm() {
+
+}
+
 
 check_os() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -83,8 +93,8 @@ spinner() {
         output=$(cat $ERROR_LOG_FILE)
         echo -e "$output"
         rm -f $ERROR_LOG_FILE
-        # tput cnorm
-        # exit 1
+        tput cnorm
+        exit 1
     fi
 
     step=$((step + 1))
@@ -108,23 +118,28 @@ package_manager=$(cat $LOG_FILE)
 echo "Your OS package manager is $package_manager" 
 
 STEPS=(
-  "installing Oh-My-Zsh terminal"
+  # "installing Oh-My-Zsh terminal"
   "Installing yq"
   "installing jq"
   # "installing VSCode"
-  "installing bat"
+  # "installing bat"
   # "installing kubectx & kubens"
   # "installing git"
-
+  # "installing gcloud"
+  # "installing Python3"
 )
+
 CMDS=(
   # "$package_manager install oh-my-zsh"
   "$package_manager install yq"
   "$package_manager install jq"
   # "$package_manager install visual-studio-code"
-  # "$package_manager install bat"
+  # "install_bat $package_manager"
   # "$package_manager kubectx"
   # "$package_manager git"
+  # "install_gcloud $package_manager"
+  # "$package_manager python3"
+  "$package_manager "
 )
 
 spinner "${STEPS[@]}" "${CMDS[@]}"
