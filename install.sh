@@ -16,26 +16,26 @@ install_oh-my-zsh() {
   fi
 
   echo #### USEFUL ALIASES ### >> ~/.zshrc
-  echo "alias install='brew install'"
-  echo "alias uninstall='brew uninstall'"
-  echo "alias refresh='source ~/.zshrc'"
-  echo "alias ll='ls -lha'"
-  
+  echo "alias install='brew install'" >> ~/.zshrc
+  echo "alias uninstall='brew uninstall'" >> ~/.zshrc
+  echo "alias refresh='source ~/.zshrc'" >> ~/.zshrc
+  echo "alias ll='ls -lha'" >> ~/.zshrc
+  echo "" >> ~/.zshrc
 }
 
 install_bat() {
   $1 bat
-  echo "alias cat='bat --paging never --theme DarkNeon'"
+  echo "alias cat='bat --paging never --theme DarkNeon'" >> ~/.zshrc
 }
 
-install_gcloud() {
-
+install_docker() {
+  $1 docker
+  echo #### DOCKER ALIASES ### >> ~/.zshrc
+  echo "alias dockerrm='docker rm $(docker ps -aq)'"
+  echo "alias dockerstp='docker stop $(docker ps -aq)'"
+  echo "alias dockerrmi='docker rmi -f $(docker images -q) && docker images'"
+  echo "" >> ~/.zshrc
 }
-
-install_kubectk_helm() {
-
-}
-
 
 check_os() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -124,8 +124,11 @@ STEPS=(
   # "installing VSCode"
   # "installing bat"
   # "installing kubectx & kubens"
+  # "installing kubectl"
+  # "installing helm"
   # "installing git"
   # "installing gcloud"
+  # "installing docker"
   # "installing Python3"
 )
 
@@ -133,13 +136,16 @@ CMDS=(
   # "$package_manager install oh-my-zsh"
   "$package_manager install yq"
   "$package_manager install jq"
-  # "$package_manager install visual-studio-code"
+  # "$package_manager  visual-studio-code"
   # "install_bat $package_manager"
-  # "$package_manager kubectx"
-  # "$package_manager git"
-  # "install_gcloud $package_manager"
+  # "$package_manager install install visual-studio-code"
+  # "$package_manager install kubectx"
+  # "$package_manager install kubectl"
+  # "$package_manager install helm"
+  # "$package_manager install git"
+  # "$package_manager gcloud"
+  # "install_docker $package_manager"
   # "$package_manager python3"
-  "$package_manager "
 )
 
 spinner "${STEPS[@]}" "${CMDS[@]}"
