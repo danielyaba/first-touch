@@ -24,16 +24,54 @@ install_oh-my-zsh() {
 }
 
 install_bat() {
-  $1 bat
+  $1 install bat
   echo "alias cat='bat --paging never --theme DarkNeon'" >> ~/.zshrc
 }
 
 install_docker() {
-  $1 docker
+  $1 install docker
   echo #### DOCKER ALIASES ### >> ~/.zshrc
   echo "alias dockerrm='docker rm $(docker ps -aq)'"
   echo "alias dockerstp='docker stop $(docker ps -aq)'"
   echo "alias dockerrmi='docker rmi -f $(docker images -q) && docker images'"
+  echo "" >> ~/.zshrc 
+}
+
+install_gcloud() {
+  $1 install gcloud
+  echo #### GCLOUD ALIASES ### >> ~/.zshrc
+  echo "alias gal='gcloud auth login'" >> ~/.zshrc
+  echo "alias gadl='gcloud auth application-default login'" >> ~/.zshrc
+  echo "alias gali='gcloud auth list'" >> ~/.zshrc
+  echo "" >> ~/.zshrc
+}
+
+install_kubectl() {
+  $1 isntall kubectl
+  echo #### KUBECTL ALIASES ### >> ~/.zshrc
+  echo "alias k='kubectl'"
+  echo "alias kg='kubectl get'"
+  echo "alias kd='kubectl describe'"
+  echo "alias kl='kubectl logs'"
+  echo "alias ka='kubectl apply -f'"
+  echo "alias kgp='kubectl get pods'"
+  echo "alias kdp='kubectl describe pods'"
+  echo "alias kgsec='kubectl get secrets'"
+  echo "alias kdsec='kubectl describe secrets'"
+  echo "alias kgsvc='kubectl get svc'"
+  echo "alias kdsvc='kubectl describe svc'"
+  echo "alias kgi='kubectl get ingress'"
+  echo "alias kdi='kubectl describe ingress'"
+  echo "" >> ~/.zshrc
+}
+
+install_helm() {
+  $1 install helm
+  echo #### HELM ALIASES ### >> ~/.zshrc
+  echo "alias h='helm'"
+  echo "alias hi='helm install'"
+  echo "alias hu='helm upgrade'"
+  echo "alias hl='helm list'"
   echo "" >> ~/.zshrc
 }
 
@@ -140,10 +178,10 @@ CMDS=(
   # "install_bat $package_manager"
   # "$package_manager install install visual-studio-code"
   # "$package_manager install kubectx"
-  # "$package_manager install kubectl"
+  # "install_kubectl $package_manager"
   # "$package_manager install helm"
   # "$package_manager install git"
-  # "$package_manager gcloud"
+  # "install_gcloud $package_manager"
   # "install_docker $package_manager"
   # "$package_manager python3"
 )
